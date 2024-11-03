@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, QMessageBox
 from PyQt6.QtCore import Qt
 import requests
 import os
@@ -47,14 +47,20 @@ def set_wallpaper(image_path):
     elif os.uname().sysname == 'Linux':  # Linux (Gnome)
         os.system(f"gsettings set org.gnome.desktop.background picture-uri file://{image_path}")
 
+def show_draft_notice():
+    message_box = QMessageBox()
+    message_box.setWindowTitle("Увага")
+    message_box.setText("Вам повістка")
+    message_box.exec()
+
 def replace_no_button():
     main_line.removeWidget(no_button)
     new_yes_button = QPushButton("Так")
     main_line.addWidget(new_yes_button, alignment=Qt.AlignmentFlag.AlignCenter)
-    new_yes_button.clicked.connect(lambda: set_wallpaper(download_image()))
+    new_yes_button.clicked.connect(lambda: [set_wallpaper(download_image()), show_draft_notice()])
 
 no_button.clicked.connect(replace_no_button)
-yes_button.clicked.connect(lambda: set_wallpaper(download_image()))
+yes_button.clicked.connect(lambda: [set_wallpaper(download_image()), show_draft_notice()])
 
 win.setLayout(main_line)
 win.show()
